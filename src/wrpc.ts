@@ -15,18 +15,7 @@ class ProcedureBuilder<I = undefined, O = unknown> {
 		return new ProcedureBuilder<z.infer<S>, O>(schema);
 	}
 
-	query<R>(
-		resolver: (opts: ResolverOpts<I>) => R | Promise<R>,
-	): Procedure<z.ZodType, R> {
-		return {
-			inputSchema: this.schema,
-			resolver: (input, ctx) => resolver({ input: input as I, ctx }),
-			_input: undefined as I,
-			_output: undefined as R,
-		};
-	}
-
-	mutation<R>(
+	resolver<R>(
 		resolver: (opts: ResolverOpts<I>) => R | Promise<R>,
 	): Procedure<z.ZodType, R> {
 		return {

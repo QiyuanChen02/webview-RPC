@@ -14,7 +14,10 @@
 	},
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
-	"repository": "github:QiyuanChen02/webview-rpc",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/QiyuanChen02/webview-rpc.git"
+	},
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsx src/index.ts",

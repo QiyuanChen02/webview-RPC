@@ -71,7 +71,7 @@ Wire it to your `WebviewPanel` when you create it (e.g. in `extension.ts`):
 ```ts
 // src/extension.ts
 import * as vscode from "vscode";
-import { attachRouterToPanel } from "your-package-name";
+import { attachRouterToPanel } from "webview-rpc";
 import { appRouter } from "./shared/router";
 
 export function activate(ctx: vscode.ExtensionContext) {

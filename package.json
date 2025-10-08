@@ -1,6 +1,6 @@
 {
 	"name": "webview-rpc",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A typesafe library to connect the webview with the extension backend",
 	"type": "module",
 	"bin": {
@@ -9,7 +9,8 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
 		}
 	},
 	"main": "dist/index.js",
@@ -19,7 +20,7 @@
 		"url": "git+https://github.com/QiyuanChen02/webview-rpc.git"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "rollup -c",
 		"dev": "tsx src/index.ts",
 		"format": "npx @biomejs/biome format --write --unsafe ./src"
 	},
@@ -33,12 +34,19 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@biomejs/biome": "2.2.5",
+		"@rollup/plugin-commonjs": "^28.0.6",
+		"@rollup/plugin-node-resolve": "^16.0.2",
+		"@rollup/plugin-typescript": "^12.1.4",
 		"@types/node": "^24.6.2",
 		"@types/vscode": "^1.104.0",
+		"rollup": "^4.52.4",
+		"rollup-plugin-dts": "^6.2.3",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
+		"tslib": "^2.8.1",
 		"zod": "^4.1.11"
-	}
+	},
+	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

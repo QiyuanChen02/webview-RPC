@@ -1,6 +1,6 @@
 {
 	"name": "webview-rpc",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A typesafe library to connect the webview with the extension backend",
 	"type": "module",
 	"bin": {

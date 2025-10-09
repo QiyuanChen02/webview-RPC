@@ -1,39 +1,38 @@
-import path from "node:path";
+import { createRequire } from "node:module";
 import commonjs from "@rollup/plugin-commonjs";
-import resolve from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import dts from "rollup-plugin-dts";
 
-function makeExternal(id) {
-	if (id.startsWith("node:")) return true;
-	return !id.startsWith(".") && !path.isAbsolute(id);
-}
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 
-const input = "./src/index.ts";
+/**
+ * Treat your deps as external so consumers de-duplicate and Node builtins aren’t bundled.
+ */
+const external = [
+	...Object.keys(pkg.dependencies || {}),
+	...Object.keys(pkg.peerDependencies || {}),
+	/^node:/,
+];
 
-const code = {
-	input,
-	external: makeExternal,
+export default {
+	input: "src/index.ts",
+	external,
+	plugins: [
+		nodeResolve({ preferBuiltins: true }),
+		commonjs(),
+		typescript({ tsconfig: "./tsconfig.json" }),
+	],
 	output: [
-		{ file: "dist/index.js", format: "esm", sourcemap: true },
 		{
 			file: "dist/index.cjs",
 			format: "cjs",
-			exports: "named",
+			sourcemap: true,
+		},
+		{
+			file: "dist/index.mjs",
+			format: "esm",
 			sourcemap: true,
 		},
 	],
-	plugins: [
-		resolve({ preferBuiltins: true }),
-		commonjs(),
-		typescript({ tsconfig: "tsconfig.json" }),
-	],
 };
-
-const types = {
-	input,
-	output: [{ file: "dist/index.d.ts", format: "esm" }],
-	plugins: [dts()],
-};
-
-export default [code, types];

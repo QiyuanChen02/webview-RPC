@@ -15,7 +15,7 @@ class ProcedureBuilder<I = undefined, O = unknown> {
 		return new ProcedureBuilder<z.infer<S>, O>(schema);
 	}
 
-	resolver<R>(
+	resolve<R>(
 		resolver: (opts: ResolverOpts<I>) => R | Promise<R>,
 	): Procedure<z.ZodType, R> {
 		return {

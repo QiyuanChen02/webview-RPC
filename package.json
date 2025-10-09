@@ -1,11 +1,7 @@
 {
 	"name": "webview-rpc",
-	"version": "1.0.2",
+	"version": "1.0.6",
 	"description": "A typesafe library to connect the webview with the extension backend",
-	"type": "module",
-	"bin": {
-		"webview-rpc": "dist/index.js"
-	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -21,6 +17,7 @@
 	},
 	"scripts": {
 		"build": "rollup -c",
+		"distribute": "npm run build && npm version patch && npm publish",
 		"dev": "tsx src/index.ts",
 		"format": "npx @biomejs/biome format --write --unsafe ./src"
 	},

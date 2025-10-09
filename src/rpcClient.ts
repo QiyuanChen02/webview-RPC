@@ -15,13 +15,6 @@ declare global {
 	}
 }
 
-const vscode = window.acquireVsCodeApi?.();
-if (!vscode) {
-	throw new Error(
-		"acquireVsCodeApi() not available. Run inside a VS Code webview.",
-	);
-}
-
 type PendingEntry = {
 	resolve: (v: unknown) => void;
 	reject: (e: unknown) => void;
@@ -34,6 +27,13 @@ type PendingEntry = {
  *   const msg = await rpcCall("greeting", undefined);
  */
 export function createRpcClient<R extends RouterDef>() {
+	const vscode = window.acquireVsCodeApi?.();
+	if (!vscode) {
+		throw new Error(
+			"acquireVsCodeApi() not available. Run inside a VS Code webview.",
+		);
+	}
+
 	const pending = new Map<string, PendingEntry>();
 
 	// One listener per client instance

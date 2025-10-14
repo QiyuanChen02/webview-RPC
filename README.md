@@ -46,20 +46,9 @@ import { initWRPC } from "your-package-name";
 const { router, procedure } = initWRPC.create();
 
 export const appRouter = router({
-  ping: procedure.resolve(() => "pong"),
-
   greet: procedure
     .input(z.object({ name: z.string().min(1) }))
-    .resolve(({ name }) => `Hello, ${name}!`),
-
-  files: {
-    readText: procedure
-      .input(z.object({ uri: z.string() }))
-      .resolve(async ({ uri }) => {
-        const data = await vscode.workspace.fs.readFile(vscode.Uri.parse(uri));
-        return new TextDecoder().decode(data);
-      }),
-  },
+    .resolve(({ input }) => `Hello, ${input.name}!`),
 });
 
 // Export the **type** for the webview to import
@@ -88,7 +77,7 @@ export function activate(ctx: vscode.ExtensionContext) {
       panel.webview.html = getHtml(panel.webview);
 
       // 👇 This connects the router to the panel
-      attachRouterToPanel(panel, appRouter);
+      attachRouterToPanel(panel, appRouter, ctx);
     })
   );
 }
@@ -107,19 +96,10 @@ In your webview bundle (e.g. `webview/main.ts`):
 import type { AppRouter } from "../shared/router";
 import { createRpcClient } from "your-package-name";
 
-const rpc = createRpcClient<AppRouter>();
-
+const wrpc = createRpcClient<AppRouter>();
 async function run() {
-  const pong = await rpc("ping", undefined);
-  console.log(pong); // -> "pong"
-
-  const greeting = await rpc("greet", { name: "VS Code" });
+  const greeting = await wrpc("greet", { name: "VS Code" });
   console.log(greeting); // -> "Hello, VS Code!"
-
-  const content = await rpc("files.readText", {
-    uri: "vscode://file/path/to/file.txt",
-  });
-  console.log(content);
 }
 
 run().catch(console.error);
@@ -232,22 +212,6 @@ src/
 ```
 
 > Ensure your bundler includes `webview/main.ts` in the webview HTML and that `enableScripts: true` is set when creating the panel.
-
----
-
-## FAQ
-
-**Do I have to share runtime code between host and webview?**  
-No. Only the **types** need to be shared. Export `export type AppRouter = typeof appRouter;` from a module that both sides can import **types** from (use `import type { AppRouter } from "..."` in the webview).
-
-**Does it support nested routers?**  
-Yes. Nested objects become dotted path segments, e.g., `files.readText`.
-
-**What about one‑way notifications?**  
-You can model them as procedures that return `void`.
-
-**What about streaming?**  
-This library is request/response oriented. For streaming, build on top (e.g. separate `onDidReceiveMessage` channels).
 
 ---
 

@@ -1,4 +1,4 @@
-import type * as vscode from "vscode";
+import * as vscode from "vscode";
 import type z from "zod";
 import type {
 	RpcError,
@@ -38,7 +38,6 @@ export function attachRouterToPanel(
 	router: RouterDef,
 	panel: vscode.WebviewPanel,
 	context: vscode.ExtensionContext,
-	vscodeApi: typeof vscode,
 ) {
 	const subscribe = panel.webview.onDidReceiveMessage(
 		async (msg: RpcMessage) => {
@@ -61,7 +60,7 @@ export function attachRouterToPanel(
 				const result = await procedure.resolver(parsed.data, {
 					panel,
 					context,
-					vscode: vscodeApi,
+					vscode,
 				});
 				const response: RpcSuccess = {
 					kind: "rpc/success",

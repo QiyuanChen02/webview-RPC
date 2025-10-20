@@ -3,7 +3,7 @@
 		"target": "ES2020",
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		"rootDir": "src",
+		"rootDir": "packages",
 		"outDir": "dist",
 		"declaration": true,
 		"declarationMap": true,
@@ -12,5 +12,6 @@
 		"esModuleInterop": true,
 		"stripInternal": true
 	},
-	"include": ["src"]
+	"include": ["packages/**/*"],
+	"exclude": ["dist", "node_modules"]
 }

@@ -1,5 +1,5 @@
+import type { Procedure, ResolverOpts, RouterDef } from "@webview-rpc/shared";
 import z from "zod";
-import type { Procedure, ResolverOpts, RouterDef } from "./rpcTypes";
 
 class ProcedureBuilder<I = undefined, O = unknown> {
 	private schema: z.ZodType;

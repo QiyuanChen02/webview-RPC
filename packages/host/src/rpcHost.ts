@@ -1,12 +1,13 @@
-import * as vscode from "vscode";
-import type z from "zod";
 import type {
+	Procedure,
+	RouterDef,
 	RpcError,
 	RpcMessage,
 	RpcRequest,
 	RpcSuccess,
-} from "./rpcProtocol";
-import type { Procedure, RouterDef } from "./rpcTypes";
+} from "@webview-rpc/shared";
+import * as vscode from "vscode";
+import type z from "zod";
 
 function isProcedure(obj: unknown): obj is Procedure<z.ZodType, unknown> {
 	return (

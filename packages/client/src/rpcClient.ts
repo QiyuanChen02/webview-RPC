@@ -1,11 +1,12 @@
-import type { RpcMessage, RpcRequest } from "./rpcProtocol";
-import { isRpcMessage } from "./rpcProtocol";
 import type {
 	InputAtPath,
 	OutputAtPath,
 	PathKeys,
 	RouterDef,
-} from "./rpcTypes";
+	RpcMessage,
+	RpcRequest,
+} from "@webview-rpc/shared";
+import { isRpcMessage } from "@webview-rpc/shared";
 
 declare global {
 	interface Window {

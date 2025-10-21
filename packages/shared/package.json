@@ -1,0 +1,17 @@
+{
+	"name": "@webview-rpc/shared",
+	"version": "1.0.4",
+	"main": "dist/index.cjs",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
+	"scripts": {
+		"build": "tsdown"
+	},
+	"dependencies": {
+		"zod": "^4.1.11"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

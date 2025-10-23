@@ -1,12 +1,13 @@
 {
 	"name": "@webview-rpc/host",
-	"version": "1.0.4",
+	"version": "1.0.8",
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"type": "module",
 	"scripts": {
-		"build": "tsdown"
+		"build": "tsdown",
+		"increment-version": "yarn version patch"
 	},
 	"dependencies": {
 		"@webview-rpc/shared": "workspace:*",

@@ -1,5 +1,5 @@
 {
-	"name": "@webview-rpc/shared",
+	"name": "@webview-rpc/react-query",
 	"version": "1.0.8",
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
@@ -10,6 +10,10 @@
 		"increment-version": "yarn version patch"
 	},
 	"dependencies": {
+		"@tanstack/react-query": "^5.90.5",
+		"@webview-rpc/client": "workspace:*",
+		"@webview-rpc/shared": "workspace:*",
+		"react": "^19.2.0",
 		"zod": "^4.1.11"
 	},
 	"publishConfig": {

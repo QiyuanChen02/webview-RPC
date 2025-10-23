@@ -21,13 +21,27 @@ type PendingEntry = {
 	reject: (e: unknown) => void;
 };
 
-/**
- * Creates a typed RPC caller for a given router.
- * Usage:
- *   const rpcCall = createRpcClient<AppRouter>();
- *   const msg = await rpcCall("greeting", undefined);
- */
-export function createRpcClient<R extends RouterDef>() {
+export class Wrpc<R extends RouterDef> {
+	constructor(
+		private vscode: { postMessage: (msg: unknown) => void },
+		private pending: Map<string, PendingEntry>,
+	) {}
+
+	async call<P extends PathKeys<R>>(
+		path: P,
+		input?: InputAtPath<R, P>,
+	): Promise<OutputAtPath<R, P>> {
+		const id = crypto.randomUUID();
+		const req: RpcRequest = { kind: "rpc/request", id, path, input };
+		this.vscode.postMessage(req);
+
+		return new Promise<OutputAtPath<R, P>>((resolve, reject) =>
+			this.pending.set(id, { resolve, reject }),
+		);
+	}
+}
+
+export function createWrpcClient<R extends RouterDef>() {
 	const vscode = window.acquireVsCodeApi?.();
 	if (!vscode) {
 		throw new Error(
@@ -52,19 +66,5 @@ export function createRpcClient<R extends RouterDef>() {
 	};
 	window.addEventListener("message", onMessage);
 
-	// The returned function is fully typed; generics are inferred at call sites
-	function rpcCall<P extends PathKeys<R>>(
-		path: P,
-		input: InputAtPath<R, P>,
-	): Promise<OutputAtPath<R, P>> {
-		const id = crypto.randomUUID(); // no fallback as requested
-		const req: RpcRequest = { kind: "rpc/request", id, path, input };
-		vscode.postMessage(req);
-
-		return new Promise<OutputAtPath<R, P>>((resolve, reject) => {
-			pending.set(id, { resolve, reject });
-		});
-	}
-
-	return rpcCall;
+	return new Wrpc<R>(vscode, pending);
 }

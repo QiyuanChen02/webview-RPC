@@ -19,8 +19,9 @@
 		"url": "git+https://github.com/QiyuanChen02/webview-rpc.git"
 	},
 	"scripts": {
-		"build": "yarn workspace @webview-rpc/shared build && yarn workspace @webview-rpc/client build && yarn workspace @webview-rpc/host build",
+		"build": "yarn workspace @webview-rpc/shared build && yarn workspace @webview-rpc/client build && yarn workspace @webview-rpc/host build && yarn workspace @webview-rpc/react-query build",
 		"release": "yarn workspaces foreach -A --no-private npm publish --tolerate-republish",
+		"version:patch": "yarn workspaces foreach -A --no-private run increment-version",
 		"format": "npx @biomejs/biome format --write packages"
 	},
 	"files": [
@@ -37,9 +38,6 @@
 		"@types/vscode": "^1.104.0",
 		"tsdown": "^0.15.9",
 		"typescript": "^5.9.3"
-	},
-	"dependencies": {
-		"zod": "^4.1.11"
 	},
 	"packageManager": "yarn@3.8.7"
 }

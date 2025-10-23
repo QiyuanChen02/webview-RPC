@@ -340,6 +340,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.90.5":
+  version: 5.90.5
+  resolution: "@tanstack/query-core@npm:5.90.5"
+  checksum: e707343dfa96f7d062269c6ce3ebe7bf624c64ce653e40212fe124962a34be2f9787e451ea5b61c073e53bddad02503294094be19f23c4636d72626eeb40b5e2
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.90.5":
+  version: 5.90.5
+  resolution: "@tanstack/react-query@npm:5.90.5"
+  dependencies:
+    "@tanstack/query-core": 5.90.5
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 4a0fce820142aa55d3918b234da7680bfd8ed9c3a0ddc6c7e3ee529728ce97dbd113fefa40a952159c42c90eda8dcedc38cd85e1b06f08b309f60909066ee9a1
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.1":
   version: 0.10.1
   resolution: "@tybys/wasm-util@npm:0.10.1"
@@ -365,12 +383,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webview-rpc/client@workspace:packages/client":
+"@webview-rpc/client@workspace:*, @webview-rpc/client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@webview-rpc/client@workspace:packages/client"
   dependencies:
     "@webview-rpc/shared": "workspace:*"
-    zod: ^4.1.11
   languageName: unknown
   linkType: soft
 
@@ -379,6 +396,18 @@ __metadata:
   resolution: "@webview-rpc/host@workspace:packages/host"
   dependencies:
     "@webview-rpc/shared": "workspace:*"
+    zod: ^4.1.11
+  languageName: unknown
+  linkType: soft
+
+"@webview-rpc/react-query@workspace:packages/react-query":
+  version: 0.0.0-use.local
+  resolution: "@webview-rpc/react-query@workspace:packages/react-query"
+  dependencies:
+    "@tanstack/react-query": ^5.90.5
+    "@webview-rpc/client": "workspace:*"
+    "@webview-rpc/shared": "workspace:*"
+    react: ^19.2.0
     zod: ^4.1.11
   languageName: unknown
   linkType: soft
@@ -556,6 +585,13 @@ __metadata:
   version: 0.2.11
   resolution: "quansync@npm:0.2.11"
   checksum: af484ed433f752c092d278232f68a6643e2cf0193f95ec60c84245e1f3662ef64da90f8fb1bc57dd407362ff181f246a9304ba53725dd7122f45c4a839f85a61
+  languageName: node
+  linkType: hard
+
+"react@npm:^19.2.0":
+  version: 19.2.0
+  resolution: "react@npm:19.2.0"
+  checksum: 33dd01bf699e1c5040eb249e0f552519adf7ee90b98c49d702a50bf23af6852ea46023a5f7f93966ab10acd7a45428fa0f193c686ecdaa7a75a03886e53ec3fe
   languageName: node
   linkType: hard
 
@@ -791,7 +827,6 @@ __metadata:
     "@types/vscode": ^1.104.0
     tsdown: ^0.15.9
     typescript: ^5.9.3
-    zod: ^4.1.11
   languageName: unknown
   linkType: soft
 

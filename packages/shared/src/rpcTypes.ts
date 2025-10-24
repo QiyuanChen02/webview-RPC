@@ -4,6 +4,11 @@ import type z from "zod";
 // Build "a", "a.b", "a.b.c" for any nested object where leaves are Procedure
 
 type StringKeys<T> = Extract<keyof T, string>;
+
+/**
+ * Compute the set of dotted path keys into a nested router object.
+ * Example: { a: { b: Procedure } } => "a.b"
+ */
 export type PathKeys<T> = {
 	[K in StringKeys<T>]: T[K] extends Procedure<any, any>
 		? K
@@ -26,16 +31,25 @@ export type ProcedureAtPath<
 			: never
 		: never;
 
+/**
+ * Input type for a procedure at a given path on the router.
+ */
 export type InputAtPath<
 	R extends RouterDef,
 	P extends PathKeys<R>,
 > = InferInput<ProcedureAtPath<R, P>>;
 
+/**
+ * Output type for a procedure at a given path on the router.
+ */
 export type OutputAtPath<
 	R extends RouterDef,
 	P extends PathKeys<R>,
 > = InferOutput<ProcedureAtPath<R, P>>;
 
+/**
+ * Execution context passed to procedure resolvers running on the host.
+ */
 export type ProcedureCtx = {
 	panel: vscode.WebviewPanel;
 	context: vscode.ExtensionContext;
@@ -47,6 +61,11 @@ export type ResolverOpts<I> = {
 	input: I;
 };
 
+/**
+ * A Procedure bundles an input schema and a resolver function. The
+ * `_input` and `_output` fields exist purely to carry type information
+ * through the router definition.
+ */
 export type Procedure<S extends z.ZodType, R> = {
 	_input: z.infer<S>;
 	_output: R;
@@ -54,6 +73,10 @@ export type Procedure<S extends z.ZodType, R> = {
 	resolver: (input: z.infer<S>, ctx: ProcedureCtx) => R | Promise<R>;
 };
 
+/**
+ * Router definition: a mapping of keys to either nested routers or leaf
+ * Procedure definitions.
+ */
 export type RouterDef = { [k: string]: Procedure<any, any> | RouterDef };
 
 export type InferInput<P> = P extends { _input: infer I } ? I : never;

@@ -6,10 +6,10 @@ import type {
 	RpcRequest,
 	RpcSuccess,
 } from "@webview-rpc/shared";
-import * as vscode from "vscode";
+import type * as vscode from "vscode";
 import type z from "zod";
 
-function isProcedure(obj: unknown): obj is Procedure<z.ZodType, unknown> {
+function isProcedure(obj: unknown): obj is Procedure<any, z.ZodType, unknown> {
 	return (
 		obj && typeof obj === "object" && "resolver" in obj && "inputSchema" in obj
 	);
@@ -18,7 +18,7 @@ function isProcedure(obj: unknown): obj is Procedure<z.ZodType, unknown> {
 function getProcedure(
 	router: RouterDef,
 	path: string,
-): Procedure<z.ZodType, unknown> {
+): Procedure<any, z.ZodType, unknown> {
 	const parts = path.split(".");
 	let current: any = router;
 	for (const part of parts) {
@@ -35,10 +35,10 @@ function getProcedure(
 	return current;
 }
 
-export function attachRouterToPanel(
+export function attachRouterToPanel<TContext = void>(
 	router: RouterDef,
 	panel: vscode.WebviewPanel,
-	context: vscode.ExtensionContext,
+	ctx: TContext,
 ) {
 	const subscribe = panel.webview.onDidReceiveMessage(
 		async (msg: RpcMessage) => {
@@ -58,11 +58,7 @@ export function attachRouterToPanel(
 					return;
 				}
 
-				const result = await procedure.resolver(parsed.data, {
-					panel,
-					context,
-					vscode,
-				});
+				const result = await procedure.resolver(parsed.data, ctx);
 				const response: RpcSuccess = {
 					kind: "rpc/success",
 					id: request.id,

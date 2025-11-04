@@ -6,11 +6,12 @@ import z from "zod";
  * .resolve() helpers. This is only a compile-time helper - the builder
  * returns a plain Procedure object used at runtime.
  */
-class ProcedureBuilder<I = undefined, O = unknown> {
+class ProcedureBuilder<TContext, TInput = undefined, TOutput = unknown> {
 	private schema: z.ZodType;
 
-	_input!: I;
-	_output!: O;
+	_input!: TInput;
+	_output!: TOutput;
+	_context!: TContext;
 
 	constructor(schema: z.ZodType = z.void()) {
 		this.schema = schema;
@@ -21,7 +22,7 @@ class ProcedureBuilder<I = undefined, O = unknown> {
 	 * typed with the inferred input type.
 	 */
 	input<S extends z.ZodType>(schema: S) {
-		return new ProcedureBuilder<z.infer<S>, O>(schema);
+		return new ProcedureBuilder<TContext, z.infer<S>, TOutput>(schema);
 	}
 
 	/**
@@ -31,13 +32,14 @@ class ProcedureBuilder<I = undefined, O = unknown> {
 	 * @param resolver - Function implementing the procedure logic
 	 */
 	resolve<R>(
-		resolver: (opts: ResolverOpts<I>) => R | Promise<R>,
-	): Procedure<z.ZodType, R> {
+		resolver: (opts: ResolverOpts<TContext, TInput>) => R | Promise<R>,
+	): Procedure<TContext, typeof this.schema, R> {
 		return {
 			inputSchema: this.schema,
-			resolver: (input, ctx) => resolver({ input: input as I, ctx }),
-			_input: undefined as I,
+			resolver: (input, ctx) => resolver({ input: input as TInput, ctx }),
+			_input: undefined as TInput,
 			_output: undefined as R,
+			_context: undefined as TContext,
 		};
 	}
 }
@@ -51,14 +53,52 @@ export function createRouter<T extends RouterDef>(def: T): T {
 }
 
 /**
- * Minimal entry to initialise the small WRPC DSL used to declare routers
- * and procedures.
+ * tRPC-like initialization for WRPC. Use initWRPC.context<YourContext>().create()
+ * to get a typed router and procedure builder, or initWRPC.create() for no context.
+ *
+ * @example
+ * ```ts
+ * // With context
+ * type MyContext = { db: Database; user: User };
+ * const t = initWRPC.context<MyContext>().create();
+ *
+ * const router = t.router({
+ *   getUser: t.procedure
+ *     .input(z.object({ id: z.string() }))
+ *     .resolve(({ input, ctx }) => {
+ *       // ctx is typed as MyContext
+ *       return ctx.db.findUser(input.id);
+ *     }),
+ * });
+ *
+ * // Without context
+ * const t2 = initWRPC.create();
+ * const router2 = t2.router({
+ *   ping: t2.procedure.resolve(() => 'pong'),
+ * });
+ * ```
  */
 export const initWRPC = {
+	/**
+	 * Initialize WRPC with a specific context type.
+	 */
+	context<TContext>() {
+		return {
+			create() {
+				return {
+					router: createRouter,
+					procedure: new ProcedureBuilder<TContext>(),
+				};
+			},
+		};
+	},
+	/**
+	 * Initialize WRPC without context.
+	 */
 	create() {
 		return {
 			router: createRouter,
-			procedure: new ProcedureBuilder(),
+			procedure: new ProcedureBuilder<void>(),
 		};
 	},
 };

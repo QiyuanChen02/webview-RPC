@@ -22,7 +22,8 @@
 		"build": "yarn workspace @webview-rpc/shared build && yarn workspace @webview-rpc/client build && yarn workspace @webview-rpc/host build && yarn workspace @webview-rpc/react-query build",
 		"release": "yarn workspaces foreach -A --no-private npm publish --tolerate-republish",
 		"version:patch": "yarn workspaces foreach -A --no-private run increment-version",
-		"format": "npx @biomejs/biome format --write packages"
+		"format": "npx @biomejs/biome format --write packages",
+		"all": "yarn build && yarn version:patch && yarn release"
 	},
 	"files": [
 		"dist"

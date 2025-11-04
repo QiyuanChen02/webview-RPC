@@ -15,7 +15,7 @@ import type {
 export type WrpcClient<R extends RouterDef> = {
 	call: <P extends PathKeys<R>>(
 		path: P,
-		input: InputAtPath<R, P>,
+		input?: InputAtPath<R, P>,
 	) => Promise<OutputAtPath<R, P>>;
 };
 /**
@@ -35,7 +35,7 @@ export type WrpcClient<R extends RouterDef> = {
  */
 export function withReactQuery<R extends RouterDef>(wrpcClient: WrpcClient<R>) {
 	return {
-		...wrpcClient,
+		call: wrpcClient.call.bind(wrpcClient),
 
 		/**
 		 * Typed React Query hook for fetching data from an RPC route.
@@ -46,7 +46,7 @@ export function withReactQuery<R extends RouterDef>(wrpcClient: WrpcClient<R>) {
 		 */
 		useQuery: <P extends PathKeys<R>>(
 			path: P,
-			input: InputAtPath<R, P>,
+			input?: InputAtPath<R, P>,
 			options?: Omit<
 				UseQueryOptions<OutputAtPath<R, P>>,
 				"queryKey" | "queryFn"
@@ -72,7 +72,7 @@ export function withReactQuery<R extends RouterDef>(wrpcClient: WrpcClient<R>) {
 				"mutationFn"
 			>,
 		) => {
-			return useMutation({
+			return useMutation<OutputAtPath<R, P>, Error, InputAtPath<R, P>>({
 				mutationFn: (input: InputAtPath<R, P>) => wrpcClient.call(path, input),
 				...options,
 			});

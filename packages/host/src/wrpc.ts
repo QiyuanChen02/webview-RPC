@@ -6,14 +6,14 @@ import z from "zod";
  * .resolve() helpers. This is only a compile-time helper - the builder
  * returns a plain Procedure object used at runtime.
  */
-class ProcedureBuilder<TContext, TInput = undefined, TOutput = unknown> {
-	private schema: z.ZodType;
+class ProcedureBuilder<
+	TContext,
+	TSchema extends z.ZodType = z.ZodVoid,
+	TOutput = unknown,
+> {
+	private schema: TSchema;
 
-	_input!: TInput;
-	_output!: TOutput;
-	_context!: TContext;
-
-	constructor(schema: z.ZodType = z.void()) {
+	constructor(schema: TSchema = z.void() as unknown as TSchema) {
 		this.schema = schema;
 	}
 
@@ -22,7 +22,7 @@ class ProcedureBuilder<TContext, TInput = undefined, TOutput = unknown> {
 	 * typed with the inferred input type.
 	 */
 	input<S extends z.ZodType>(schema: S) {
-		return new ProcedureBuilder<TContext, z.infer<S>, TOutput>(schema);
+		return new ProcedureBuilder<TContext, S, TOutput>(schema);
 	}
 
 	/**
@@ -32,15 +32,19 @@ class ProcedureBuilder<TContext, TInput = undefined, TOutput = unknown> {
 	 * @param resolver - Function implementing the procedure logic
 	 */
 	resolve<R>(
-		resolver: (opts: ResolverOpts<TContext, TInput>) => R | Promise<R>,
-	): Procedure<TContext, typeof this.schema, R> {
-		return {
+		resolver: (
+			opts: ResolverOpts<TContext, z.infer<TSchema>>,
+		) => R | Promise<R>,
+	): Procedure<TContext, TSchema, R> {
+		const proc: Procedure<TContext, TSchema, R> = {
 			inputSchema: this.schema,
-			resolver: (input, ctx) => resolver({ input: input as TInput, ctx }),
-			_input: undefined as TInput,
+			resolver: (input: z.infer<TSchema>, ctx: TContext) =>
+				resolver({ input, ctx }),
+			_input: undefined as z.infer<TSchema>,
 			_output: undefined as R,
 			_context: undefined as TContext,
 		};
+		return proc;
 	}
 }
 
